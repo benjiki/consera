@@ -14,9 +14,81 @@ datasource db {
 }
 
 model User {
+  id        Int       @id @default(autoincrement())
+  name      String
+  email     String    @unique
+  password  String
+  role      Role      @default(CUSTOMER)  // CUSTOMER, ADMIN
+  createdAt DateTime  @default(now())
+
+  orders    Order[]
+}
+
+enum Role {
+  CUSTOMER
+  ADMIN
+}
+
+model Event {
+  id          Int       @id @default(autoincrement())
+  title       String
+  description String?
+  date        DateTime
+  location    String
+  createdAt   DateTime  @default(now())
+
+  tickets     Ticket[]
+}
+
+model Ticket {
+  id        Int      @id @default(autoincrement())
+  eventId   Int
+  type      String   // e.g. VIP, Regular, Student
+  price     Float
+  quantity  Int      // how many available
+  sold      Int      @default(0)
+
+  event     Event    @relation(fields: [eventId], references: [id])
+  orderItems OrderItem[]
+}
+
+model Merchandise {
   id        Int      @id @default(autoincrement())
   name      String
-  email     String   @unique
-  password  String
+  description String?
+  price     Float
+  stock     Int      // how many items in inventory
   createdAt DateTime @default(now())
+
+  orderItems OrderItem[]
+}
+
+model Order {
+  id        Int         @id @default(autoincrement())
+  userId    Int
+  total     Float
+  status    OrderStatus @default(PENDING) // PENDING, PAID, CANCELLED
+  createdAt DateTime    @default(now())
+
+  user      User        @relation(fields: [userId], references: [id])
+  orderItems OrderItem[]
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  CANCELLED
+}
+
+model OrderItem {
+  id             Int    @id @default(autoincrement())
+  orderId        Int
+  ticketId       Int?   // null if it’s a merchandise
+  merchandiseId  Int?   // null if it’s a ticket
+  quantity       Int
+  price          Float
+
+  order        Order       @relation(fields: [orderId], references: [id])
+  ticket       Ticket?     @relation(fields: [ticketId], references: [id])
+  merchandise  Merchandise?@relation(fields: [merchandiseId], references: [id])
 }
