@@ -61,3 +61,5 @@ build/
 */.env.*
 !*/.env.example
 .env.*.local
+
+/src/generated/prisma
