@@ -1,16 +1,27 @@
 import express from "express";
 import dotenv from "dotenv";
+import bodyParser from "body-parser";
+
 import authRoutes from "./routes/authRoutes.js";
+import eventRoutes from "./routes/event.routes.js";
+import ticketRoutes from "./routes/ticket.routes.js";
+import merchRoutes from "./routes/merchandise.routes.js";
+import orderRoutes from "./routes/order.routes.js";
 
 dotenv.config();
 
 const app = express();
+app.use(bodyParser.json());
 
 // Middleware
 app.use(express.json());
 
 // Routes
 app.use("/api/auth", authRoutes);
+app.use("/api/events", eventRoutes);
+app.use("/api/tickets", ticketRoutes);
+app.use("/api/merchandise", merchRoutes);
+app.use("/api/orders", orderRoutes);
 
 // Health check route
 app.get("/api", (req, res) => {
