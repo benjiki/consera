@@ -4,11 +4,10 @@ import Custominput from "@/components/Custominput";
 import CustomButton from "@/components/CustomButton";
 import { useDispatch } from "react-redux";
 import { loginSuccess } from "@/store/authSlice";
-import { registerUser } from "@/services/authService";
+import { loginUser } from "@/services/authService";
 import { Link } from "expo-router";
 
-const Signup = () => {
-  const [name, setName] = useState("");
+const Signin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -16,7 +15,7 @@ const Signup = () => {
   const dispatch = useDispatch();
 
   const submit = async () => {
-    if (!name || !email || !password) {
+    if (!email || !password) {
       Alert.alert("Error", "All fields are required!");
       return;
     }
@@ -24,11 +23,11 @@ const Signup = () => {
     try {
       setIsSubmitting(true);
 
-      const res = await registerUser({ name, email, password });
+      const res = await loginUser({ email, password });
 
       if (res.token) {
         dispatch(loginSuccess({ token: res.token, user: res.user || null }));
-        Alert.alert("Success", "Account created and token stored in Redux!");
+        Alert.alert("Success", "Signed in and token stored in Redux!");
       }
     } catch (error) {
       Alert.alert("Error");
@@ -39,13 +38,6 @@ const Signup = () => {
 
   return (
     <View className="px-2 gap-4 mt-10">
-      <Custominput
-        placeholder="Enter your name"
-        value={name}
-        onChangeText={setName}
-        label="Full Name"
-        keyboardType="default"
-      />
       <Custominput
         placeholder="Enter your email"
         value={email}
@@ -61,20 +53,20 @@ const Signup = () => {
         secureTextEntry
       />
       <CustomButton
-        title="Sign Up"
+        title="Sign In"
         isLoading={isSubmitting}
         onPress={submit}
         style={"bg-secondary my-7"}
         textStyle={"font-bold"}
       />
       <View className="flex flex-row gap-5 justify-center">
-        <Text className="text-white-300">already have an account ?</Text>
-        <Link href={"/sign-in"} className="text-white-100 font-light">
-          Sign up
+        <Text className="text-white-300">Don't have an account ?</Text>
+        <Link href={"/sigin-up"} className="text-white-100 font-light">
+          Sign Up
         </Link>
       </View>
     </View>
   );
 };
 
-export default Signup;
+export default Signin;
